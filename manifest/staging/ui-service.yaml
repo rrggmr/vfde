@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  namespace: vfde-inv-var-demo-staging
+  labels:
+    app: ui
+spec:
+  ports:
+    - name: app
+      protocol: TCP
+      port: 80
+      targetPort: http
+  selector:
+    app: ui
+  clusterIP:
+  type: NodePort

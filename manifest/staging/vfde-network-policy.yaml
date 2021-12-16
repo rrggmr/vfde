@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vfde-network-policy
+  namespace: vfde-inv-var-demo-staging
+spec:
+  egress:
+  - ports:
+    - port: 80
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: vfde-inv-var
+          tier: ui
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 172.22.32.0/19
+    - ipBlock:
+        cidr: 172.22.64.0/19
+    - ipBlock:
+        cidr: 172.22.96.0/19
+    ports:
+    - port: 80
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      network-policy: vfde-network-policy

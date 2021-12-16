@@ -1,0 +1,135 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+  {{- include "vfde-inv-var-ui-demo.uiLabels" . | nindent 4 }}
+spec:
+  ports:
+    - name: app
+      protocol: TCP
+      port: 80
+      targetPort: http
+  selector:
+    {{- include "vfde-inv-var-ui-demo.uiSelectorLabels" . | nindent 4 }}
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vfde-inv-var-ui-demo.fullname" . }}
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+  labels:
+  {{- include "vfde-inv-var-ui-demo.uiLabels" . | nindent 4 }}
+spec:
+{{- if or .Values.env "dev" .Values.env "staging" }}
+  replicas: {{ .Values.uiReplicas }}
+{{else}}
+  replicas: 3
+{{end}}
+  selector:
+    matchLabels:
+    {{- include "vfde-inv-var-ui-demo.uiSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+      {{- include "vfde-inv-var-ui-demo.uiLabels" . | nindent 8 }}
+    spec:
+ {{- if eq .Values.env "dev" }}   
+      volumes:
+        - name: ui
+          persistentVolumeClaim:
+            claimName: vfde-pv-claim
+  {{end}}
+      containers:
+        - name: ui
+          image: {{ .Values.uiImage.repository }}:{{ .Values.uiImage.tag }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: VUE_APP_ZEPPELIN_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: zeppelin-server-url
+                  key: zeppelin_url
+        {{- if or .Values.env "dev" .Values.env "staging" }}
+          resources:
+            limits:
+              cpu: 100m
+              memory: 500M
+            requests:
+              cpu: 50m
+              memory: 50M
+        {{else}}
+          resources:
+            limits:
+              cpu: 250m
+              memory: 500M
+            requests:
+              cpu: 150m
+              memory: 100M
+        {{end}}     
+         {{- if eq .Values.env "dev" }} 
+          volumeMounts:
+            - name: ui
+              mountPath: /usr/share/nginx/html
+              subPath: ui
+          {{end}}
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 3
+            timeoutSeconds: 1
+            periodSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 3
+            timeoutSeconds: 1
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: regcred
+---
+{{- if eq .Values.env "dev" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ui-nginx
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ include "vfde-inv-var-ui-demo.fullname" . }}.{{ .Values.env }}
+      secretName: {{ include "vfde-inv-var-ui-demo.fullname" . }}-ingress-tls
+  rules:
+    - host: {{ include "vfde-inv-var-ui-demo.fullname" . }}.{{ .Values.env }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ui
+                port:
+                  number: 80
+{{end}}

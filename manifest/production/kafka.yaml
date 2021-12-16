@@ -1,0 +1,120 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: kafka
+  namespace: vfde-inv-var-demo
+  labels:
+    app: vfde-inv-var
+    tier: kafka
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vfde-inv-var
+      tier: kafka
+  template:
+    metadata:
+      labels:
+        app: vfde-inv-var
+        tier: kafka
+    spec:
+      initContainers:
+        - name: init-kafka-volume
+          image: 'busybox:1.33.0'
+          command:
+            - chown
+            - '1001:1001'
+            - /bitnami/kafka
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500M
+            requests:
+              cpu: 100m
+              memory: 300M
+          volumeMounts:
+            - name: kafka
+              mountPath: /bitnami/kafka
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      containers:
+        - name: kafka
+          image: 'bitnami/kafka:2.7.0'
+          ports:
+            - name: kafka
+              containerPort: 9092
+              protocol: TCP
+            - name: kafka-secure
+              containerPort: 9093
+              protocol: TCP
+            - name: jmx-broker
+              containerPort: 9393
+              protocol: TCP
+            - name: jmx-mirror
+              containerPort: 9394
+              protocol: TCP
+            - name: http-metric
+              containerPort: 24042
+              protocol: TCP
+          env:
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: 'zookeeper-client:2181'
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: 'yes'
+            - name: KAFKA_CFG_LOG_CLEANUP_POLICY
+              value: compact
+            - name: KAFKA_CFG_LOG_CLEANER_BACKOFF_MS
+              value: '360000'
+            - name: KAFKA_CFG_COMPRESSION_TYPE
+              value: gzip
+            - name: KAFKA_CFG_LOG_CLEANER_MAX_COMPACTION_LAG_MS
+              value: '86400000'
+            - name: KAFKA_CFG_LOG_CLEANER_MIN_COMPACTION_LAG_MS
+              value: '360000'
+            - name: KAFKA_CFG_LOG_CLEANER_MIN_CLEANABLE_RATIO
+              value: '0.01'
+            - name: KAFKA_HEAP_OPTS
+              value: '-Xmx700M -Xms300M'
+          resources:
+            limits:
+              cpu: '1'
+              memory: 1Gi
+            requests:
+              cpu: 175m
+              memory: 1Gi
+          volumeMounts:
+            - name: kafka
+              mountPath: /bitnami/kafka
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: kafka
+        creationTimestamp: null
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 3G
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  serviceName: kafka
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  revisionHistoryLimit: 10
+
+

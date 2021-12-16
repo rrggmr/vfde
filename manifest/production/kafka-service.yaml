@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka
+  namespace: vfde-inv-var-demo
+  labels:
+    app: vfde-inv-var
+    tier: kafka
+spec:
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
+  selector:
+    app: vfde-inv-var
+    tier: kafka
+  clusterIP: None
+  type: ClusterIP
+  sessionAffinity: None
+

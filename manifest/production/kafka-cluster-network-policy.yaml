@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kafka
+  namespace: vfde-inv-var-demo
+spec:
+  podSelector:
+    matchLabels:
+      tier: kafka
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: zookeeper
+    ports:
+      - port: 2181
+        protocol: TCP
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: kafka
+    ports:
+      - port: 9091
+        protocol: TCP
+      - port: 9092
+        protocol: TCP
+      - port: 9093
+        protocol: TCP
+      - port: 9393
+        protocol: TCP
+      - port: 9394
+        protocol: TCP
+      - port: 24042
+        protocol: TCP
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: zookeeper
+    ports:
+      - port: 2181
+        protocol: TCP
+  - to:
+    - podSelector:
+        matchLabels:
+          tier: kafka
+    ports:
+      - port: 9091
+        protocol: TCP
+      - port: 9092
+        protocol: TCP
+      - port: 9093
+        protocol: TCP
+      - port: 9393
+        protocol: TCP
+      - port: 9394
+        protocol: TCP
+      - port: 24042
+
+

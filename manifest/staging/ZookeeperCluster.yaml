@@ -1,0 +1,55 @@
+apiVersion: zookeeper.pravega.io/v1beta1
+kind: ZookeeperCluster
+metadata:
+  name: zookeeper
+  namespace: vfde-inv-var-demo-staging
+spec:
+  image:
+    pullPolicy: Always
+    repository: pravega/zookeeper
+    tag: latest
+  labels:
+    app: zookeeper
+    release: zookeeper
+  persistence:
+    reclaimPolicy: Delete
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 3G
+      storageClassName: ebs-encrypted
+  pod:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - zookeeper
+            topologyKey: kubernetes.io/hostname
+          weight: 20
+    labels:
+      app: zookeeper
+      release: zookeeper
+    resources: {}
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+  ports:
+  - containerPort: 2181
+    name: client
+  - containerPort: 2888
+    name: quorum
+  - containerPort: 3888
+    name: leader-election
+  - containerPort: 8080
+    name: metrics
+  replicas: 3
+
+
+
+
