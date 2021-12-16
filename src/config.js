@@ -77,7 +77,7 @@ export default conf
 // Dummy data only - actual data will have real UUIDs, these ones are fake and not suitable.
 
 const faker = require('faker')
-faker.locale = "de";
+faker.locale = "en";
 
 function fakeDatasources(amount=1) {
     const datasources = []
@@ -273,4 +273,3 @@ export const fakeData = {
     products: fakeProducts(15),
     alerts: fakeAlerts(15)
 }
-

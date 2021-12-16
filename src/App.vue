@@ -9,7 +9,7 @@
     <div class="content">
       <router-view />
     </div>
-    <footer><p>&copy; {{ new Date().getFullYear() }} Vodafone Group PLC</p> </footer>
+    <footer><p>&copy; {{ new Date().getFullYear() }} Telecom Group PLC</p> </footer>
   </div>
 </template>
 
