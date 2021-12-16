@@ -2,7 +2,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: ui
-  namespace: vfde-inv-var-demo-staging
+  namespace: vfde-inv-var-staging
 spec:
   maxReplicas: 10
   minReplicas: 2

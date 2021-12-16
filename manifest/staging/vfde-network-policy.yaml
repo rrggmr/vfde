@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: vfde-network-policy
-  namespace: vfde-inv-var-demo-staging
+  namespace: vfde-inv-var-staging
 spec:
   egress:
   - ports:

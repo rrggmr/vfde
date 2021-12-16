@@ -1,4 +1,4 @@
-const title = 'Telecom Invoice Verification'
+const title = 'Vodafone Germany Invoice Verification'
 
 module.exports = {
   chainWebpack: config => {

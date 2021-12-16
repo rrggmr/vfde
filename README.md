@@ -1,4 +1,4 @@
-# Telecom Invoice Checking App
+# Vodafone Invoice Checking App
 
 ## Project setup
 ```

@@ -5,7 +5,7 @@ import VuexPersist from 'vuex-persist'
 Vue.use(Vuex)
 
 const vuexPersist = new VuexPersist({
-    key: 'vfde-inv-var-ui-demo',
+    key: 'vfde-inv-var-ui',
     storage: window.localStorage
 })
 

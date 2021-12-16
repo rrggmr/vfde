@@ -1,5 +1,5 @@
 
-import FileExplorer from "@/components/dashboard/config/aws/FileExplorer";
+import FileExplorer from "@/components/dashboard/aws/FileExplorer";
 
 export default [
   {

@@ -99,10 +99,7 @@ $font-lite: 'vodafone', sans-serif;
     font-size: .9em;
   }
 
-
-
   // Start of sidebar styling
-
 
   #sidebarContainer {
     position: absolute;
@@ -119,17 +116,13 @@ $font-lite: 'vodafone', sans-serif;
     white-space: nowrap;
 
     &.indented {
-
       overflow-x: visible;
       overflow-y: visible;
     }
 
-
     .sidebar {
       white-space: normal;
       background-color: rgb(250,250, 250);
-      width: 25%;
-      padding: 2em;
       overflow: auto;
       box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
       position: relative;
@@ -145,7 +138,7 @@ $font-lite: 'vodafone', sans-serif;
       &:first-of-type {
         .closeSidebar {
           &:after {
-            content: "x"
+            content: "\00D7";
           }
         }
       }
@@ -158,13 +151,13 @@ $font-lite: 'vodafone', sans-serif;
         font-size: 2em;
         font-weight: normal;
         position: absolute;
-        margin-top: -1.275em;
         height: 1em;
-        line-height: 1;
         width: 1em;
-        margin-left: -1.5em;
-        right: 1em;
-        top:2em;
+        right:.25em;
+        top: .25em;
+        display: grid;
+        align-content: center;
+        justify-content: center;
         &:hover, &:active {
           color:#c0c0c0;
           background: #fff;
@@ -182,15 +175,7 @@ $font-lite: 'vodafone', sans-serif;
         overflow: visible;
       }
 
-      header {
-        text-align: left;
-        padding: 2em 0;
-        h2 {
-          font-size: 1.25em;
-          font-weight: normal;
 
-        }
-      }
       .error {
         color:rgba(67, 133, 1, 1);
       }
@@ -218,33 +203,6 @@ $font-lite: 'vodafone', sans-serif;
           background: rgba(230,230,230,1);
         }
       }
-      .details {
-        margin-bottom: 2em;
-        div {
-          text-align: left;
-          display: grid;
-          grid-gap: 1em;
-          grid-template-columns: auto auto 1fr;
-          border-bottom: 2px solid rgba(235, 235, 235, 1);
-          padding: .5em 0;
-          p {
-            margin:0;
-          }
-        }
-      }
-      h3, .h3 {
-        font-size: 1.15em !important;
-        font-weight: bold;
-        text-align: left;
-        border-bottom: 2px solid rgba(235, 235, 235, 1);
-        padding-bottom: .5em;
-      }
-      h4 {
-        font-size: 1em;
-        font-weight: bold;
-        line-height: 1.5;
-        margin: 0;
-      }
     }
   }
 
@@ -257,6 +215,9 @@ $font-lite: 'vodafone', sans-serif;
     background-color: #E5E5E5;
     height:100%;
     .table {
+      .centered {
+       text-align: center;
+      }
       thead {
         th {
           border-left:1px solid #dee2e6;
@@ -287,7 +248,7 @@ $font-lite: 'vodafone', sans-serif;
             }
             &.left_aligned {
               text-align: left;
-              padding-left:2em;
+              //padding-left:2em;
               white-space: nowrap;
             }
           }
@@ -359,6 +320,13 @@ $font-lite: 'vodafone', sans-serif;
       .playground_holder {
         text-align: left;
         height: 100%;
+        h2 {
+          font-size: 1.125em;
+          background: #dee2e6;
+          padding: 0.75em 1rem;
+          font-weight: bold;
+          margin: 0 0 1rem 0;
+        }
         h3 {
           font-size: 1em;
           font-weight: bold;
@@ -386,9 +354,10 @@ $font-lite: 'vodafone', sans-serif;
             }
           }
           &.editor {
+
             border-radius: .25em .25em 0 0;
             .card-body {
-              padding: 1em;
+              padding: 2em;
             }
             &.basic {
               border-radius: 0 .25em 0 0;
@@ -400,6 +369,7 @@ $font-lite: 'vodafone', sans-serif;
                 display: grid;
                 grid-template-rows: auto;
                 grid-gap: 2em;
+
                 .details {
                   display: grid;
                   grid-template-columns: 2fr 1fr;
@@ -418,18 +388,6 @@ $font-lite: 'vodafone', sans-serif;
                       }
                     }
                   }
-
-                }
-                .fields {
-                  display: grid;
-                  grid-template-columns: 1fr 2fr;
-                  h3 {
-                    margin-bottom: 1em;
-                  }
-                }
-                .dataTypes {
-                  display: grid;
-                  grid-template-columns: .5fr .5fr 2fr;
                 }
               }
             }

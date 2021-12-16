@@ -1,7 +1,18 @@
 export default {
     methods: {
-        getIcon: (icon) => {
-            return require('@/assets/' + icon + '.svg')
+        getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        },
+        getNthObjectElement(object, n) {
+            return object[Object.keys(object)[n]];
+        },
+        lastElementOfPath() {
+            const currentPath = this.$route.path;
+            const pathElements = currentPath.split("/")
+            const filtered = pathElements.filter(function(value){
+                return value !== ""
+            })
+            return filtered[filtered.length - 1].toLowerCase()
         },
         localiseNumbers(string) {
             if(parseFloat(string) || parseInt(string)) {

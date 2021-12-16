@@ -1,6 +1,0 @@
-dependencies:
-- name: vfde-inv-var-api
-  repository: https://ggmr.github.io/vfde-inv-var-api/charts
-  version: 0.1.0
-digest: sha256:728992a35b2ef5b9093bab2f2877cb3e45684e415cdf60760fe70e9176260ad0
-generated: "2021-12-03T14:47:37.11318Z"

@@ -49,7 +49,3 @@ spec:
   - containerPort: 8080
     name: metrics
   replicas: 3
-
-
-
-

@@ -56,5 +56,3 @@ spec:
       - port: 9394
         protocol: TCP
       - port: 24042
-
-

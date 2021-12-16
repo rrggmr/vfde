@@ -14,7 +14,7 @@ spec:
           app: zookeeper
     - podSelector:
         matchLabels:
-          app: kafka
+          tier: kafka
     ports:
       - port: 2888
         protocol: TCP
@@ -31,7 +31,7 @@ spec:
           app: zookeeper
     - podSelector:
         matchLabels:
-          app: kafka
+          tier: kafka
     ports:
       - port: 2888
         protocol: TCP

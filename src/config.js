@@ -1,11 +1,13 @@
-const cmOptions = {lineNumbers: false,
+const cmOptions = {
+    lineNumbers: false,
     theme: 'material-palenight',
     tabSize: 4,
     indentWithTabs: false,
     readOnly: true,
     mode: 'javascript',
     autoRefresh: true,
-    scrollbarStyle: 'simple'}
+    scrollbarStyle: 'simple'
+}
 
 
 const conf = {
@@ -77,51 +79,56 @@ export default conf
 const faker = require('faker')
 faker.locale = "de";
 
-function fakeDatasource() {
-    return {
-        name: faker.company.companyName(),
-        editorConfig: {
-            id: {
-                value: faker.datatype.uuid(),
-                freeText: true
-            },
-            type: "csv",
-            streaming: true,
-            fields: [
-                {
-                    fieldType: "StringType",
-                    name: "Foo",
-                    nullable: false
-                },
-                {
-                    fieldType: "DecimalType",
-                    name: "Bar",
-                    nullable: true
-                }
-            ],
-            options: [
-                {
-                    key: "path",
-                    value: "https://s3.amazonaws.com/example-bucket/path/to/object",
-                    freeText: false
-                },
-                {
-                    key: "compression",
-                    value: "gzip",
-                    freeText: false
-                },
-                {
-                    key: "foo",
-                    value: "bar",
+function fakeDatasources(amount=1) {
+    const datasources = []
+    for (let i=0; i<amount; i ++) {
+        const datasource = {
+            name: faker.company.companyName(),
+            editorConfig: {
+                id: {
+                    value: faker.datatype.uuid(),
                     freeText: true
-                }
-            ],
-            advanced: false
-        },
-        pythonCode: "schema = StructType([\n    StructField(\"Foo\", StringType(), false),\n    StructField(\"Bar\", DecimalType(), false),\n])\n\ndf = spark.readStream \\\n    .format(\"csv\") \\\n    .option(\"path\", \"https://s3.amazonaws.com/example-bucket/path/to/object\") \\\n    .option(\"compression\", \"gzip\") \\\n    .schema(schema) \\\n    .load()\n\ndf.createOrReplaceTempView(\"example-datasource\")",
-        created: faker.date.recent(),
-        modified: faker.date.recent(),
+                },
+                type: "csv",
+                streaming: true,
+                fields: [
+                    {
+                        fieldType: "StringType",
+                        name: "Foo",
+                        nullable: false
+                    },
+                    {
+                        fieldType: "DecimalType",
+                        name: "Bar",
+                        nullable: true
+                    }
+                ],
+                options: [
+                    {
+                        key: "path",
+                        value: "https://s3.amazonaws.com/example-bucket/path/to/object",
+                        freeText: false
+                    },
+                    {
+                        key: "compression",
+                        value: "gzip",
+                        freeText: false
+                    },
+                    {
+                        key: "foo",
+                        value: "bar",
+                        freeText: true
+                    }
+                ],
+                advanced: false
+            },
+            pythonCode: "schema = StructType([\n    StructField(\"Foo\", StringType(), false),\n    StructField(\"Bar\", DecimalType(), false),\n])\n\ndf = spark.readStream \\\n    .format(\"csv\") \\\n    .option(\"path\", \"https://s3.amazonaws.com/example-bucket/path/to/object\") \\\n    .option(\"compression\", \"gzip\") \\\n    .schema(schema) \\\n    .load()\n\ndf.createOrReplaceTempView(\"example-datasource\")",
+            created: faker.date.recent(),
+            modified: faker.date.recent(),
+        }
+        datasources.push(datasource)
     }
+    return datasources
 }
 
 function getRandomInt(max) {
@@ -179,381 +186,91 @@ export function fakeLogs(amount=1) {
     return logs.sort((b, a) => new Date(a.dateTime) - new Date(b.dateTime))
 }
 
+function fakeProducts(amount) {
+    const products = {}
+    for (let i=0; i<amount; i ++) {
+        const product = {
+            "name": faker.commerce.productName(),
+            "price": faker.commerce.price(),
+            "material": faker.commerce.productMaterial(),
+            "description": faker.commerce.productDescription(),
+            "random number": faker.datatype.float(),
+            "another random number": faker.datatype.float(),
+            "random word": faker.lorem.word(),
+            "random sentence": faker.lorem.sentence()
+        }
+        products[faker.datatype.uuid()] = product
+    }
+    return products
+}
+
+function fakeAlerts(amount) {
+    const alerts = {}
+    for (let i=0; i<amount; i ++) {
+        const alert = fakeAlert()
+        alerts[alert.uuid] = alert
+    }
+    return alerts
+}
+
+export function fakeAlert() {
+    const randomInt = getRandomInt(3)
+    let alertData
+    const fakeCount = faker.datatype.number({min:500, max:20000})
+    const fakeDate = [
+        faker.date.between('2021-11-01', '2021-11-30'),
+        faker.date.between('2021-12-01', '2021-12-31'),
+    ]
+    switch (randomInt) {
+        case 0:
+              alertData = {
+                uuid: faker.datatype.uuid(),
+                type: 'falsche Rechnung',
+                date: fakeDate,
+                count: fakeCount,
+                icon: 'euro-sign',
+                expected: faker.datatype.float({
+                    'min': 1,
+                    'max': 5
+                }),
+                actual: faker.datatype.float(
+                    {
+                        'min': 1,
+                        'max': 5
+                    }
+                ),
+            }
+            return alertData
+
+        case 1:
+            alertData = {
+                uuid: faker.datatype.uuid(),
+                type: 'falsche Ware',
+                date: fakeDate,
+                count: fakeCount,
+                icon: 'box-open',
+                expected: `P${faker.datatype.number()}`,
+                actual: `P${faker.datatype.number()}`
+            }
+            return alertData
+
+        case 2:
+            alertData = {
+                uuid: faker.datatype.uuid(),
+                type: 'unbekannte Produktlinie',
+                date: fakeDate,
+                count: fakeCount,
+                icon: 'receipt',
+                text: `${faker.commerce.productName()} ${faker.datatype.number()}`
+            }
+            return alertData
+    }
+}
+
 export const fakeData = {
     logs: fakeLogs(2),
-    dataSources: [
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-        fakeDatasource(),
-    ],
-    fields: [
-        {
-            key: 'Alarmtyp',
-            sortable: true
-        },
-        {
-            key: 'Alarminformationen',
-            sortable: false
-        }
-    ],
-    groupedFields: [
-        {
-            key: 'Anzahl',
-            sortable: true
-        },
-        {
-            key: 'Alarmtyp',
-            sortable: true
-        },
-        {
-            key: 'Alarminformationen',
-            sortable: false
-        }
-    ],
-    items: [
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            date: [
-                '2020/03/01',
-                '2020/03/28'
-            ],
-            icon: 'euro',
-            expected: '1.25',
-            actual: '2.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            date: [
-                '2020/04/01',
-                '2020/04/28'
-            ],
-            icon: 'package',
-            expected: 'P3A11',
-            actual: 'P3A12'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            date: [
-                '2020/05/01',
-                '2020/05/28'
-            ],
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            date: [
-                '2020/06/01',
-                '2020/06/28'
-            ],
-            icon: 'euro',
-            expected: '1.25',
-            actual: '2.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            date: [
-                '2020/07/01',
-                '2020/07/28'
-            ],
-            icon: 'package',
-            expected: 'P3A12',
-            actual: 'P3A14'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            date: [
-                '2020/08/01',
-                '2020/08/28'
-            ],
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            date: [
-                '2020/09/01',
-                '2020/09/28'
-            ],
-            icon: 'euro',
-            expected: '1.25',
-            actual: '2.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            date: [
-                '2020/10/01',
-                '2020/10/28'
-            ],
-            icon: 'package',
-            expected: 'P3A12',
-            actual: 'P3A14'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            date: [
-                '2020/11/01',
-                '2020/11/28'
-            ],
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            date: [
-                '2020/12/01',
-                '2020/12/28'
-            ],
-            icon: 'euro',
-            expected: '1.00',
-            actual: '2.80'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            date: [
-                '2021/01/01',
-                '2021/01/28'
-            ],
-            icon: 'package',
-            expected: 'P3A11',
-            actual: 'P3A18'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            date: [
-                '2021/02/01',
-                '2021/02/28'
-            ],
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            date: [
-                '2021/03/01',
-                '2021/03/28'
-            ],
-            icon: 'euro',
-            expected: '1.25',
-            actual: '2.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            date: [
-                '2021/04/01',
-                '2021/04/28'
-            ],
-            icon: 'package',
-            expected: 'P3A11',
-            actual: 'P3A12'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            date: [
-                '2021/05/01',
-                '2021/05/28'
-            ],
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            date: [
-                '2021/06/01',
-                '2021/06/28'
-            ],
-            icon: 'euro',
-            expected: '1.25',
-            actual: '2.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            date: [
-                '2021/07/01',
-                '2021/07/28'
-            ],
-            icon: 'package',
-            expected: 'P3A12',
-            actual: 'P3A14'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            date: [
-                '2021/08/01',
-                '2021/08/28'
-            ],
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        }
-    ],
-    groupedItems: [
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            count: 20000,
-            icon: 'euro',
-            expected: '1000.25',
-            actual: '2040.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            count: 576,
-            icon: 'package',
-            expected: 'P3A11',
-            actual: 'P3A12'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            count: 54,
-            icon: 'receipt',
-            text: 'Comet 319-246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            count: 34,
-            icon: 'euro',
-            expected: '1.23',
-            actual: '2.65'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            count: 54,
-            icon: 'package',
-            expected: 'P3A13',
-            actual: 'P3A15'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            count: 1154,
-            icon: 'receipt',
-            text: 'Comet 3319-24226'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            count: 2254,
-            icon: 'euro',
-            expected: '1.29',
-            actual: '5'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            count: 354,
-            icon: 'package',
-            expected: 'P3A16',
-            actual: 'P3A14'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            count: 754,
-            icon: 'receipt',
-            text: 'Comet 366-236'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            count: 854,
-            icon: 'euro',
-            expected: '1.00',
-            actual: '2.80'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            count: 154,
-            icon: 'package',
-            expected: 'P3A11',
-            actual: 'P3A18'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            count: 254,
-            icon: 'receipt',
-            text: 'Comet 3319-222246'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            count: 5478,
-            icon: 'euro',
-            expected: '1.22',
-            actual: '9.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            count: 5554,
-            icon: 'package',
-            expected: 'P3A10',
-            actual: 'P3A22'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            count: 5408,
-            icon: 'receipt',
-            text: 'Comet 39-2646'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Rechnung',
-            count: 254,
-            icon: 'euro',
-            expected: '7.25',
-            actual: '56.84'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'falsche Ware',
-            count: 354,
-            icon: 'package',
-            expected: 'P3A02',
-            actual: 'P3A19'
-        },
-        {
-            uuid: faker.datatype.uuid(),
-            type: 'unbekannte Produktlinie',
-            count: 545,
-            icon: 'receipt',
-            text: 'Comet 329-046'
-        }
-    ]
+    dataSources: fakeDatasources(15),
+    products: fakeProducts(15),
+    alerts: fakeAlerts(15)
 }
 

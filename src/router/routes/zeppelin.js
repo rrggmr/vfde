@@ -1,9 +1,10 @@
-import ZeppelinFrame from "@/components/dashboard/zeppelin/ZeppelinFrame";
+// import ZeppelinFrame from "@/components/dashboard/zeppelin/ZeppelinFrame";
+import ZeppelinFrame from "@/components/dashboard/zeppelin/ZeppelinPlaceholder";
 
 export default [
   {
-    path: 'reporting',
-    name: 'Reporting',
+    path: '/reports',
+    name: 'Berichte',
     component: ZeppelinFrame
   }
 ]

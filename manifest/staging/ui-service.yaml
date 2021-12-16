@@ -1,17 +1,21 @@
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
   name: ui
-  namespace: vfde-inv-var-demo-staging
+  namespace: vfde-inv-var-staging
   labels:
-    app: ui
+    app: vfde-inv-var
+    tier: ui
 spec:
   ports:
     - name: app
       protocol: TCP
       port: 80
       targetPort: http
+      nodePort: 
   selector:
-    app: ui
+    app: vfde-inv-var
+    tier: ui
   clusterIP:
   type: NodePort
+  sessionAffinity: None

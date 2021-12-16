@@ -116,5 +116,3 @@ spec:
     rollingUpdate:
       partition: 0
   revisionHistoryLimit: 10
-
-

@@ -82,3 +82,25 @@ library.add(faFileWord)
 
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons'
 library.add(faRedoAlt)
+
+import { faFileMedical } from '@fortawesome/free-solid-svg-icons'
+library.add(faFileMedical)
+
+import { faEdit } from '@fortawesome/free-solid-svg-icons'
+library.add(faEdit)
+
+import { faSearchPlus } from '@fortawesome/free-solid-svg-icons'
+library.add(faSearchPlus)
+
+import { faCalendarWeek } from '@fortawesome/free-solid-svg-icons'
+library.add(faCalendarWeek)
+
+import { faBoxOpen } from '@fortawesome/free-solid-svg-icons'
+library.add(faBoxOpen)
+
+import { faReceipt } from '@fortawesome/free-solid-svg-icons'
+library.add(faReceipt)
+
+
+
+

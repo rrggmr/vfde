@@ -2,18 +2,21 @@ kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: kafka
-  namespace: vfde-inv-var-demo-staging
+  namespace: vfde-inv-var-staging
   labels:
-    app: kafka
+    app: vfde-inv-var
+    tier: kafka
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: kafka
+      app: vfde-inv-var
+      tier: kafka
   template:
     metadata:
       labels:
-        app: kafka
+        app: vfde-inv-var
+        tier: kafka
     spec:
       initContainers:
         - name: init-kafka-volume
